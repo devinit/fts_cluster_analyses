@@ -22,7 +22,8 @@ fts[is.na(sector) & !is.na(destinationObjects_Cluster.name), sector := destinati
 #Split rows into individual sectors where multiple are recorded
 fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "sector", split.pattern = "; ", remove.unsplit = T)
 
-sectors <- fts[, .(amountUSD = sum(amountUSD)), by = .(year, sector)]
-sectors <- sectors[year %in% c(2019, 2020, 2021), .(amount = sum(amountUSD)), by = .(year, sector)][order(year, sector)]
+fts <- fts[year %in% c(2019, 2020, 2021)]
+fts[is.null(fts) | fts == "NULL"] <- NA
+fts[, `:=` (reportDetails = NULL, childFlowIds = NULL)]
 
-fwrite(sectors, "output/sectors.csv")
+fwrite(fts, "project_data/fts_flows.csv")
