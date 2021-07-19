@@ -26,4 +26,7 @@ fts <- fts[year %in% c(2019, 2020, 2021)]
 fts[is.null(fts) | fts == "NULL"] <- NA
 fts[, `:=` (reportDetails = NULL, childFlowIds = NULL)]
 
+fts[grepl(911, sourceObjects_Emergency.id)|grepl(911, destinationObjects_Emergency.id)|
+           grepl(952, sourceObjects_Plan.id)|grepl(952, destinationObjects_Plan.id), covid_emergency := TRUE]
+
 fwrite(fts, "project_data/fts_flows.csv")
