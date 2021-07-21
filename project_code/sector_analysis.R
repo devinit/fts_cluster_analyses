@@ -38,7 +38,7 @@ sectors_covid[, proportion := amount/sum(amount), by = year]
 sectors_covid.cast <- dcast(sectors_covid, sector ~ year, value.var = c("amount", "proportion"))
 sectors_covid.cast[is.na(sectors_covid.cast)] <- 0
 
-fwrite(sectors.cast, "output/fts_covid_emergency_sectors.csv")
+fwrite(sectors_covid.cast, "output/fts_covid_emergency_sectors.csv")
 
 #sectors by plan (HRP)
 fts[, plan := destinationObjects_Plan.name]
