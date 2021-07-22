@@ -3,7 +3,7 @@ suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), 
 setwd(dirname(getActiveDocumentContext()$path))
 lapply(c("functions/fts_appeals_data.R"), source)
 
-appeal_list <- fts_get_appeal_urls(2019:2021)
+appeal_list <- fts_get_appeal_urls(2015:2021)
 
 appeal_requirements <- list()
 pb <- txtProgressBar(max = nrow(appeal_list), style = 3)

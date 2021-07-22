@@ -7,7 +7,8 @@ lapply(c("functions/fts_get_flows.R", "functions/fts_unnest_flows.R", "functions
 setwd("..")
 
 #Download FTS flows and unnest from JSON
-fts_raw <- fts_get_flows(year = c(2019,2020,2021))
+fts_raw <- fts_get_flows(year = c(2015:2021))
+fts <- fts[status == "paid"]
 fts <- fts_unnest_flows(fts_raw)
 
 #Split rows into individual years where multiple are recorded
@@ -22,7 +23,7 @@ fts[is.na(sector) & !is.na(destinationObjects_Cluster.name), sector := destinati
 #Split rows into individual sectors where multiple are recorded
 fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "sector", split.pattern = "; ", remove.unsplit = T)
 
-fts <- fts[year %in% c(2019, 2020, 2021)]
+fts <- fts[year %in% c(2015:2021)]
 fts[is.null(fts) | fts == "NULL"] <- NA
 fts[, `:=` (reportDetails = NULL, childFlowIds = NULL)]
 
