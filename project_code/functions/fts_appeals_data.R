@@ -26,7 +26,7 @@ fts_get_appeal_urls <- function(years){
 }
 
 #Overall appeal requirements
-fts_get_appeal_requirements <- function(appeal_id){
+fts_get_appeal_requirements <- function(appeal_id, year){
   
   required.packages <- c("data.table","jsonlite","httr","XML")
   lapply(required.packages, require, character.only=T)
@@ -35,7 +35,7 @@ fts_get_appeal_requirements <- function(appeal_id){
   
   data <- htmlParse(GET(planlink))
   
-  plan_name = xpathSApply(data, "//h1[@class='page-title']", xmlValue)
+  plan_name = xpathSApply(data, "//h1[@class='cd-page-title']", xmlValue)
   plan_name <- gsub("\\n", "", plan_name)
   
   tables <- readHTMLTable(xpathSApply(data, "//div[@class='funding-progress-bar']", xmlGetAttr, "data-content"))
@@ -61,12 +61,12 @@ fts_get_appeal_requirements <- function(appeal_id){
   covid <- covid[-1]
   non.covid <- non.covid[-1]
   
-  out <- cbind(plan_name = plan_name, covid, non.covid)
+  out <- cbind(plan_name = plan_name, year = year, covid, non.covid)
   return(out)
 }
 
 #Cluster funding and requirements
-fts_get_appeal_clusters <- function(appeal_id){
+fts_get_appeal_clusters <- function(appeal_id, year){
   
   required.packages <- c("data.table","jsonlite","httr","XML")
   lapply(required.packages, require, character.only=T)
@@ -75,7 +75,7 @@ fts_get_appeal_clusters <- function(appeal_id){
   
   data <- htmlParse(GET(planlink))
   
-  plan_name = xpathSApply(data, "//h1[@class='page-title']", xmlValue)
+  plan_name = xpathSApply(data, "//h1[@class='cd-page-title']", xmlValue)
   plan_name <- gsub("\\n", "", plan_name)
   
   tables <- readHTMLTable(xpathSApply(data, "//div[@class='view-content row']")[[1]])
@@ -83,6 +83,6 @@ fts_get_appeal_clusters <- function(appeal_id){
   names(tables)[grepl("cluster|sector", names(tables), ignore.case = T)] <- "Cluster"
   tables <- data.table(tables[-1,])
   
-  out <- cbind(plan_name, tables)
+  out <- cbind(plan_name = plan_name, year = year, tables)
   return(out)
 }

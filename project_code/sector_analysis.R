@@ -7,10 +7,13 @@ fts <- fread("project_data/fts_flows.csv", encoding = "UTF-8")
 
 sector.decode <- (fts[!(sector %in% fts$destinationObjects_GlobalCluster.name), .(sector = unique(sector), new_sector = NA_character_)])
 sector.decode[grepl("COVID-19", sector), new_sector := "COVID-19"]
-sector.decode[grepl("Multisector|All non-COVID|Multi-sector", sector, ignore.case = T), new_sector := "Multi-sector"]
+sector.decode[grepl("Health", sector), new_sector := "Health"]
+sector.decode[grepl("Emergency Livelihoods", sector), new_sector := "Early Recovery"]
+sector.decode[grepl("Humanitarian Transportation", sector), new_sector := "Coordination and support"]
+sector.decode[grepl("Multisector|All non-COVID|Multi-sector|Refugee|Réfugiés|Multipurpose|Multi Purpose|Multi-Purpose|RMMS", sector, ignore.case = T), new_sector := "Multi-sector"]
 sector.decode[grepl("WASH", sector), new_sector := "Water Sanitation Hygiene"]
 sector.decode[grepl("Shelter|NFI", sector), new_sector := "Emergency Shelter and NFI"]
-sector.decode[grepl("Food Security|Sécurité Alimentaire", sector, ignore.case = T), new_sector := "Food Security"]
+sector.decode[grepl("Food Security|Sécurité Alimentaire|^Food$", sector, ignore.case = T), new_sector := "Food Security"]
 sector.decode[grepl("Cluster not yet specified", sector, ignore.case = T), new_sector := "Unspecified"]
 sector.decode[is.na(new_sector), new_sector := "Other"]
 
