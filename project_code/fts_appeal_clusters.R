@@ -37,7 +37,7 @@ appeal_clusters[, caps_cluster := toupper(Cluster)]
 
 appeal_clusters <- merge(appeal_clusters, cluster.map, by = "caps_cluster")[, caps_cluster := NULL][order(year, plan_name, `Global cluster`, Cluster)]
 
-fwrite(appeal_clusters, "project_data/appeal_clusters_global.csv")
+fwrite(appeal_clusters, "output/appeal_clusters_global.csv")
 
 cluster_years <- appeal_clusters[, lapply(.SD, function(x) sum(x, na.rm = T)), .SDcols = grep("US[$]", names(appeal_clusters), value = T), by = .(year, `Global cluster`)]
 

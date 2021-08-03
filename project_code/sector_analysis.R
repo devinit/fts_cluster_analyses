@@ -57,3 +57,14 @@ sectors_hrp.cast <- dcast(sectors_hrp, year + plan ~ sector, value.var = c("amou
 sectors_hrp.cast[is.na(sectors_hrp.cast)] <- 0
 
 fwrite(sectors_hrp.cast, "output/fts_sectors_hrp.csv")
+
+#sectors by recipient type
+sectors_recipient_type <- fts[, .(amountUSD = sum(amountUSD)), by = .(year, recipient_type, sector)]
+sectors_recipient_type <- sectors_recipient_type[, .(amount = sum(amountUSD)), by = .(year, recipient_type, sector)][order(year, recipient_type, sector)]
+
+sectors_recipient_type[, proportion := amount/sum(amount), by = .(year, recipient_type)]
+
+sectors_recipient_type.cast <- dcast(sectors_recipient_type, year + recipient_type ~ sector, value.var = c("amount", "proportion"))
+sectors_recipient_type.cast[is.na(sectors_recipient_type.cast)] <- 0
+
+fwrite(sectors_recipient_type.cast, "output/fts_sectors_recipient_type.csv")
