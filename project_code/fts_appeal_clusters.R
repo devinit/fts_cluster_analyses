@@ -39,6 +39,6 @@ appeal_clusters <- merge(appeal_clusters, cluster.map, by = "caps_cluster")[, ca
 
 fwrite(appeal_clusters, "output/appeal_clusters_global.csv")
 
-cluster_years <- appeal_clusters[, lapply(.SD, function(x) sum(x, na.rm = T)), .SDcols = grep("US[$]", names(appeal_clusters), value = T), by = .(year, `Global cluster`)]
+cluster_years <- appeal_clusters[plan_name != "COVID-19 Global Humanitarian Response Plan", lapply(.SD, function(x) sum(x, na.rm = T)), .SDcols = grep("US[$]", names(appeal_clusters), value = T), by = .(year, `Global cluster`)]
 
 fwrite(cluster_years, "output/year_cluster_requirements.csv")
