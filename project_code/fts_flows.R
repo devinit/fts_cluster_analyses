@@ -2,17 +2,28 @@ suppressPackageStartupMessages(lapply(c("data.table", "jsonlite","rstudioapi"), 
 
 #Load FTS utility functions
 setwd(dirname(getActiveDocumentContext()$path))
-lapply(c("functions/fts_get_flows.R", "functions/fts_unnest_flows.R", "functions/fts_split_rows.R"), source)
+lapply(c("functions/fts_get_flows.R", "functions/fts_unnest_flows.R", "functions/fts_split_rows.R", "functions/fts_appeals_data.R"), source)
 setwd("..")
 
 #Download FTS flows and unnest from JSON
 fts_raw <- fts_get_flows(year = c(2015:2021))
-fts <- fts[status == "paid"]
 fts <- fts_unnest_flows(fts_raw)
 
+#Only disbursements
+fts <- fts[status == "paid"]
+
+#Get plan years
+appeal_list <- fts_get_appeal_urls(2015:2021)
+
+fts[, plan_id := destinationObjects_Plan.id]
+fts[is.na(plan_id) & !is.na(sourceObjects_Plan.id), plan_id := sourceObjects_Plan.id]
+
+fts <- merge(fts, appeal_list[, .(plan_id = id, plan_year = as.character(year))], by = "plan_id", all.x = T)
+fts[is.na(plan_year), plan_year := destinationObjects_UsageYear.name]
+
 #Split rows into individual years where multiple are recorded
-fts[, year := destinationObjects_UsageYear.name]
-fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "year", split.pattern = "; ", remove.unsplit = T)
+fts <- fts_split_rows(fts, value.cols = "amountUSD", split.col = "plan_year", split.pattern = "; ", remove.unsplit = T)
+fts[, `:=` (year = plan_year, plan_year = NULL)]
 
 #Assign a sector from available fields
 fts[, sector := destinationObjects_GlobalCluster.name]

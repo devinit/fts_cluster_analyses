@@ -8,7 +8,7 @@ fts_split_rows <- function(data, value.cols = "amountUSD", split.col = "destinat
   } else {
     names(temp) <- c("rownames", paste0(split.col, ".split"), paste0(value.cols, ".split"))
   }
-  data <- merge(data[, rownames := rownames(data)], temp)
+  data <- merge(data[, rownames := rownames(data)], temp, by = "rownames")
   data[, rownames := NULL]
   return(data)
 }
